@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { courseAPI } from '../services/api';
 import CourseCard from '../components/CourseCard';
 import '../components/CourseCard.css';
@@ -13,7 +13,7 @@ const Courses = () => {
   const [category, setCategory] = useState('All');
   const [level, setLevel] = useState('All');
 
-  const fetchCourses = () => {
+  const fetchCourses = useCallback(() => {
     setLoading(true);
     const params = {};
     if (search) params.search = search;
@@ -22,9 +22,9 @@ const Courses = () => {
     courseAPI.getAll(params)
       .then(res => setCourses(res.data.courses || []))
       .finally(() => setLoading(false));
-  };
+  }, [search, category, level]);
 
-  useEffect(() => { fetchCourses(); }, [category, level]);
+  useEffect(() => { fetchCourses(); }, [fetchCourses]);
 
   const handleSearch = (e) => { e.preventDefault(); fetchCourses(); };
 
